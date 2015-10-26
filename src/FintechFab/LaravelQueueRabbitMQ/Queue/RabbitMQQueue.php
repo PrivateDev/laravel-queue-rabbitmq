@@ -21,6 +21,8 @@ class RabbitMQQueue extends Queue implements QueueContract
     protected $configQueue;
     protected $configExchange;
 
+    protected static $initedQueues = [];
+
     /**
      * @param AMQPConnection $amqpConnection
      * @param array $config
@@ -141,6 +143,12 @@ class RabbitMQQueue extends Queue implements QueueContract
     private function declareQueue($name)
     {
         $name = $this->getQueueName($name);
+
+        if (in_array($name, self::$initedQueues)) {
+            return;
+        } else {
+            self::$initedQueues[] = $name;
+        }
 
         $this->channel->exchange_declare(
             $name,
