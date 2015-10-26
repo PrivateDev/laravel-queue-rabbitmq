@@ -17,9 +17,6 @@ return [
 
     'queue'           		=> env('RABBITMQ_QUEUE'), // name of the default queue,
 
-    'exchange_declare' 		=> env('RABBITMQ_EXCHANGE_DECLARE', true), // create the exchange if not exists
-    'queue_declare_bind' 	=> env('RABBITMQ_QUEUE_DECLARE_BIND', true), // create the queue if not exists and bind to the exchange
-
     'queue_params'    		=> [
         'passive'     		=> env('RABBITMQ_QUEUE_PASSIVE', false),
         'durable'     		=> env('RABBITMQ_QUEUE_DURABLE', true),

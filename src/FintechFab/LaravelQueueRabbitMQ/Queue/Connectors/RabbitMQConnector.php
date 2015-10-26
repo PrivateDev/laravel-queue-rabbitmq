@@ -1,4 +1,6 @@
-<?php namespace FintechFab\LaravelQueueRabbitMQ\Queue\Connectors;
+<?php
+
+namespace FintechFab\LaravelQueueRabbitMQ\Queue\Connectors;
 
 use FintechFab\LaravelQueueRabbitMQ\Queue\RabbitMQQueue;
 use Illuminate\Queue\Connectors\ConnectorInterface;
