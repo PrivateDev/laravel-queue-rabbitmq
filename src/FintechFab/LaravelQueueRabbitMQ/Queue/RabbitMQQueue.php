@@ -106,9 +106,6 @@ class RabbitMQQueue extends Queue implements QueueContract
     {
         $queue = $this->getQueueName($queue);
 
-        // declare queue if not exists
-        $this->declareQueue($queue);
-
         // get envelope
         $message = $this->channel->basic_get($queue);
 
@@ -181,32 +178,35 @@ class RabbitMQQueue extends Queue implements QueueContract
         $destination = $this->getQueueName($destination);
         $name = $this->getQueueName($destination) . '_deferred_' . $delay;
 
-        // declare exchange
-        $this->channel->exchange_declare(
-            $name,
-            $this->configExchange['type'],
-            $this->configExchange['passive'],
-            $this->configExchange['durable'],
-            $this->configExchange['auto_delete']
-        );
+        if (!in_array($name, self::$initedQueues)) {
+            self::$initedQueues[] = $name;
+            // declare exchange
+            $this->channel->exchange_declare(
+                $name,
+                $this->configExchange['type'],
+                $this->configExchange['passive'],
+                $this->configExchange['durable'],
+                $this->configExchange['auto_delete']
+            );
 
-        // declare queue
-        $this->channel->queue_declare(
-            $name,
-            $this->configQueue['passive'],
-            $this->configQueue['durable'],
-            $this->configQueue['exclusive'],
-            $this->configQueue['auto_delete'],
-            false,
-            new AMQPTable([
-                'x-dead-letter-exchange' => $destination,
-                'x-dead-letter-routing-key' => $destination,
-                'x-message-ttl' => $delay * 1000,
-            ])
-        );
+            // declare queue
+            $this->channel->queue_declare(
+                $name,
+                $this->configQueue['passive'],
+                $this->configQueue['durable'],
+                $this->configQueue['exclusive'],
+                $this->configQueue['auto_delete'],
+                false,
+                new AMQPTable([
+                    'x-dead-letter-exchange' => $destination,
+                    'x-dead-letter-routing-key' => $destination,
+                    'x-message-ttl' => $delay * 1000,
+                ])
+            );
 
-        // bind queue to the exchange
-        $this->channel->queue_bind($name, $name, $name);
+            // bind queue to the exchange
+            $this->channel->queue_bind($name, $name, $name);
+        }
 
         return $name;
     }
