@@ -20,6 +20,7 @@ class RabbitMQQueue extends Queue implements QueueContract
     protected $defaultQueue;
     protected $configQueue;
     protected $configExchange;
+    protected $arguments;
 
     protected static $initedQueues = [];
 
@@ -63,10 +64,8 @@ class RabbitMQQueue extends Queue implements QueueContract
     public function pushRaw($payload, $queue = null, array $options = [])
     {
         $queue = $this->getQueueName($queue);
-        $this->declareQueue($queue);
-        if (isset($options['delay'])) {
-            $queue = $this->declareDelayedQueue($queue, $options['delay']);
-        }
+        $declaredQueue = $this->declareQueue($queue, $options);
+
 
         // push job to a queue
         $message = new AMQPMessage($payload, [
@@ -75,7 +74,7 @@ class RabbitMQQueue extends Queue implements QueueContract
         ]);
 
         // push task to a queue
-        $this->channel->basic_publish($message, $queue, $queue);
+        $this->channel->basic_publish($message, $declaredQueue, $declaredQueue);
 
         return true;
     }
@@ -135,51 +134,30 @@ class RabbitMQQueue extends Queue implements QueueContract
     }
 
     /**
-     * @param string $name
-     */
-    private function declareQueue($name)
-    {
-        $name = $this->getQueueName($name);
-
-        if (in_array($name, self::$initedQueues)) {
-            return;
-        } else {
-            self::$initedQueues[] = $name;
-        }
-
-        $this->channel->exchange_declare(
-            $name,
-            $this->configExchange['type'],
-            $this->configExchange['passive'],
-            $this->configExchange['durable'],
-            $this->configExchange['auto_delete']
-        );
-
-        $this->channel->queue_declare(
-            $name,
-            $this->configQueue['passive'],
-            $this->configQueue['durable'],
-            $this->configQueue['exclusive'],
-            $this->configQueue['auto_delete']
-        );
-
-        $this->channel->queue_bind($name, $name, $name);
-    }
-
-    /**
-     * @param string $destination
-     * @param DateTime|int $delay
-     *
+     * @param $name
+     * @param $options
      * @return string
      */
-    private function declareDelayedQueue($destination, $delay)
+    private function declareQueue($name, $options)
     {
-        $delay = $this->getSeconds($delay);
-        $destination = $this->getQueueName($destination);
-        $name = $this->getQueueName($destination) . '_deferred_' . $delay;
+        $arguments = null;
+        $name = $this->getQueueName($name);
 
+        if (isset($options['delay'])) {
+            $delay = $this->getSeconds($options['delay']);
+            $name .= '_deferred_' . $delay;
+            $arguments = new AMQPTable([
+                'x-dead-letter-exchange' => $name,
+                'x-dead-letter-routing-key' => $name,
+                'x-message-ttl' => $delay * 1000,
+            ]);
+        }
+
+        //avoid redeclaring queue
         if (!in_array($name, self::$initedQueues)) {
+            // set flag
             self::$initedQueues[] = $name;
+
             // declare exchange
             $this->channel->exchange_declare(
                 $name,
@@ -197,11 +175,7 @@ class RabbitMQQueue extends Queue implements QueueContract
                 $this->configQueue['exclusive'],
                 $this->configQueue['auto_delete'],
                 false,
-                new AMQPTable([
-                    'x-dead-letter-exchange' => $destination,
-                    'x-dead-letter-routing-key' => $destination,
-                    'x-message-ttl' => $delay * 1000,
-                ])
+                $arguments
             );
 
             // bind queue to the exchange
