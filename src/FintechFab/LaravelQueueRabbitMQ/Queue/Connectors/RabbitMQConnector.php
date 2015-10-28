@@ -4,7 +4,7 @@ namespace FintechFab\LaravelQueueRabbitMQ\Queue\Connectors;
 
 use FintechFab\LaravelQueueRabbitMQ\Queue\RabbitMQQueue;
 use Illuminate\Queue\Connectors\ConnectorInterface;
-use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Connection\AMQPSocketConnection;
 
 class RabbitMQConnector implements ConnectorInterface
 {
