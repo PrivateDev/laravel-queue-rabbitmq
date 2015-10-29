@@ -1,8 +1,8 @@
 <?php
 
-namespace FintechFab\LaravelQueueRabbitMQ\Queue\Connectors;
+namespace FintechFab\LumenQueueRabbitMQ\Queue\Connectors;
 
-use FintechFab\LaravelQueueRabbitMQ\Queue\RabbitMQQueue;
+use FintechFab\LumenQueueRabbitMQ\Queue\RabbitMQQueue;
 use Illuminate\Queue\Connectors\ConnectorInterface;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
 

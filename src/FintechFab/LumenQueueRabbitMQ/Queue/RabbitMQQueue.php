@@ -1,9 +1,9 @@
 <?php
 
-namespace FintechFab\LaravelQueueRabbitMQ\Queue;
+namespace FintechFab\LumenQueueRabbitMQ\Queue;
 
 use DateTime;
-use FintechFab\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob;
+use FintechFab\LumenQueueRabbitMQ\Queue\Jobs\RabbitMQJob;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
 use Illuminate\Queue\Queue;
 use PhpAmqpLib\Channel\AMQPChannel;

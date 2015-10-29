@@ -3,7 +3,7 @@
 return [
 
     'providers' => append_config([
-        'FintechFab\LaravelQueueRabbitMQ\LaravelQueueRabbitMQServiceProvider',
+        'FintechFab\LumenQueueRabbitMQ\LumenQueueRabbitMQServiceProvider',
     ]),
 
 ];

@@ -1,8 +1,8 @@
 <?php
 
-namespace FintechFab\LaravelQueueRabbitMQ\Queue\Jobs;
+namespace FintechFab\LumenQueueRabbitMQ\Queue\Jobs;
 
-use FintechFab\LaravelQueueRabbitMQ\Queue\RabbitMQQueue;
+use FintechFab\LumenQueueRabbitMQ\Queue\RabbitMQQueue;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Queue\Jobs\Job;

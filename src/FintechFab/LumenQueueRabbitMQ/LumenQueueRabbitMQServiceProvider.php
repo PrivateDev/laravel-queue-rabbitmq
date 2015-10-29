@@ -1,11 +1,11 @@
 <?php
 
-namespace FintechFab\LaravelQueueRabbitMQ;
+namespace FintechFab\LumenQueueRabbitMQ;
 
-use FintechFab\LaravelQueueRabbitMQ\Queue\Connectors\RabbitMQConnector;
+use FintechFab\LumenQueueRabbitMQ\Queue\Connectors\RabbitMQConnector;
 use Illuminate\Support\ServiceProvider;
 
-class LaravelQueueRabbitMQServiceProvider extends ServiceProvider
+class LumenQueueRabbitMQServiceProvider extends ServiceProvider
 {
 
     /**
