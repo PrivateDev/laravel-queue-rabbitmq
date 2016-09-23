@@ -59,7 +59,7 @@ class RabbitMQJob extends Job implements JobContract
             }
         }
 
-        return 0;
+        return 1;
     }
 
     /**
